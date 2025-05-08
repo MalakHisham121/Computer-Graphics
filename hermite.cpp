@@ -1,5 +1,7 @@
 #include <windows.h>
 #include <cmath>
+// g++ hermite.cpp -o h.exe -lgdi32
+// .\h.exe
 
 POINT points[4];
 int count = 0;
@@ -21,24 +23,24 @@ void drawBezierCurve(HDC hdc, POINT* points, int steps) {
     }
 }
 
-// Function to draw Hermite curve
 void drawHermiteCurve(HDC hdc, POINT* points, int steps) {
     for (int i = 0; i <= steps; i++) {
         float t = (float)i / steps;
         float t2 = t * t;
         float t3 = t2 * t;
-        float h1 = 2 * t3 - 3 * t2 + 1;      // (2t^3 - 3t^2 + 1)
-        float h2 = -2 * t3 + 3 * t2;         // (-2t^3 + 3t^2)
-        float h3 = t3 - 2 * t2 + t;          // (t^3 - 2t^2 + t)
+
+        float h1 = 2 * t3 - 3 * t2 + 1;        
+        float h2 = t3 - 2 * t2 + t;           
+        float h3 = -2 * t3 + 3 * t2;           
         float h4 = t3 - t2;                   
 
-        float t1x = (points[1].x - points[0].x);
-        float t1y = (points[1].y - points[0].y);
-        float t2x = (points[3].x - points[2].x);
-        float t2y = (points[3].y - points[2].y);
+        float T0x = 3 * (points[1].x - points[0].x); 
+        float T0y = 3 * (points[1].y - points[0].y);
+        float T1x = 3 * (points[3].x - points[2].x);
+        float T1y = 3 * (points[3].y - points[2].y);
 
-        float x = h1 * points[0].x + h2 * points[2].x + h3 * t1x + h4 * t2x;
-        float y = h1 * points[0].y + h2 * points[2].y + h3 * t1y + h4 * t2y;
+        float x = h1 * points[0].x + h2 * T0x + h3 * points[3].x + h4 * T1x;
+        float y = h1 * points[0].y + h2 * T0y + h3 * points[3].y + h4 * T1y;
 
         SetPixel(hdc, round(x), round(y), RGB(255, 0, 0)); 
     }
